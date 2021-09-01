@@ -1,9 +1,3 @@
-# Made with python3
-# (C) @FayasNoushad
-# Copyright permission under MIT License
-# All rights reserved by FayasNoushad
-# License -> https://github.com/FayasNoushad/Translator-Bot-V2/blob/main/LICENSE
-
 import os
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
@@ -19,9 +13,11 @@ Bot = Client(
 
 
 START_TEXT = """
-Hello {}, I am a google translator telegram bot.
+Hello {} ,
+I am a google translator telegram bot.
 
-Made by @FayasNoushad
+Made by @Heist_Empire
+
 """
 HELP_TEXT = """
 - Just send a text with language code
