@@ -1,241 +1,274 @@
+import os
+from pyrogram import Client, filters
+from pyrogram.types import (
+    InlineKeyboardButton,
+    InlineKeyboardMarkup
+)
 from googletrans import Translator
-from googletrans import Translator
-from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, RegexHandler,ConversationHandler)
-import logging
-from telegram import Bot
-import telegram
-'''for the admin notify the logger info'''
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                     level=logging.INFO
-                    )
-logger = logging.getLogger(__name__)
+TOKEN = os.environ.get("TOKEN", "")
 
-translator = Translator()
-token = 'Your token'
-bot = Bot(token)
-IN = range(1)
-form = """
-Send me word in any Language and Enter the text You want To Translate
-after that add the word to and the language you want to Translate.
-For Example - 
-<strong>ፍቅር to English </strong>  or 
-<strong>love to hindu </strong>
-<strong>Life is just a chance to grow a soul to amharic</strong>
-then send it to me"""
+API_ID = int(os.environ.get("API_ID", 12345))
 
-LANGUAGES = {
-    'af': 'afrikaans',
-    'sq': 'albanian',
-    'am': 'amharic',
-    'ar': 'arabic',
-    'hy': 'armenian',
-    'az': 'azerbaijani',
-    'eu': 'basque',
-    'be': 'belarusian',
-    'bn': 'bengali',
-    'bs': 'bosnian',
-    'bg': 'bulgarian',
-    'ca': 'catalan',
-    'ceb': 'cebuano',
-    'ny': 'chichewa',
-    'zh-cn': 'chinese (simplified)',
-    'zh-tw': 'chinese (traditional)',
-    'co': 'corsican',
-    'hr': 'croatian',
-    'cs': 'czech',
-    'da': 'danish',
-    'nl': 'dutch',
-    'en': 'english',
-    'eo': 'esperanto',
-    'et': 'estonian',
-    'tl': 'filipino',
-    'fi': 'finnish',
-    'fr': 'french',
-    'fy': 'frisian',
-    'gl': 'galician',
-    'ka': 'georgian',
-    'de': 'german',
-    'el': 'greek',
-    'gu': 'gujarati',
-    'ht': 'haitian creole',
-    'ha': 'hausa',
-    'haw': 'hawaiian',
-    'iw': 'hebrew',
-    'hi': 'hindi',
-    'hmn': 'hmong',
-    'hu': 'hungarian',
-    'is': 'icelandic',
-    'ig': 'igbo',
-    'id': 'indonesian',
-    'ga': 'irish',
-    'it': 'italian',
-    'ja': 'japanese',
-    'jw': 'javanese',
-    'kn': 'kannada',
-    'kk': 'kazakh',
-    'km': 'khmer',
-    'ko': 'korean',
-    'ku': 'kurdish (kurmanji)',
-    'ky': 'kyrgyz',
-    'lo': 'lao',
-    'la': 'latin',
-    'lv': 'latvian',
-    'lt': 'lithuanian',
-    'lb': 'luxembourgish',
-    'mk': 'macedonian',
-    'mg': 'malagasy',
-    'ms': 'malay',
-    'ml': 'malayalam',
-    'mt': 'maltese',
-    'mi': 'maori',
-    'mr': 'marathi',
-    'mn': 'mongolian',
-    'my': 'myanmar (burmese)',
-    'ne': 'nepali',
-    'no': 'norwegian',
-    'ps': 'pashto',
-    'fa': 'persian',
-    'pl': 'polish',
-    'pt': 'portuguese',
-    'pa': 'punjabi',
-    'ro': 'romanian',
-    'ru': 'russian',
-    'sm': 'samoan',
-    'gd': 'scots gaelic',
-    'sr': 'serbian',
-    'st': 'sesotho',
-    'sn': 'shona',
-    'sd': 'sindhi',
-    'si': 'sinhala',
-    'sk': 'slovak',
-    'sl': 'slovenian',
-    'so': 'somali',
-    'es': 'spanish',
-    'su': 'sundanese',
-    'sw': 'swahili',
-    'sv': 'swedish',
-    'tg': 'tajik',
-    'ta': 'tamil',
-    'te': 'telugu',
-    'th': 'thai',
-    'tr': 'turkish',
-    'uk': 'ukrainian',
-    'ur': 'urdu',
-    'uz': 'uzbek',
-    'vi': 'vietnamese',
-    'cy': 'welsh',
-    'xh': 'xhosa',
-    'yi': 'yiddish',
-    'yo': 'yoruba',
-    'zu': 'zulu',
-    'fil': 'Filipino',
-    'he': 'Hebrew'
-}
+API_HASH = os.environ.get("API_HASH", "")
+app = Client(
+        "ggt",
+        bot_token=TOKEN,api_id=API_ID,
+            api_hash=API_HASH
+    )
 
-LANGCODES = dict(map(reversed, LANGUAGES.items()))
-def start(update,context):
-    ''' opening conversation
-    when you send /start to the bot
-    you can change every string to your customized names or description 
-    '''
 
-    logger.info("Mr of %s: start conversations", update.message.from_user.first_name)
-    context.bot.send_message(chat_id=update.message.chat_id, 
-        text="Wellcome to Google Translation bot. Mr/Mrs "+ update.message.from_user.first_name+ " Chapi's Always Favorite and Bestie")
-    update.message.reply_text(form,parse_mode=telegram.ParseMode.HTML)
+@app.on_message(filters.private & filters.command(['start']))
+async def start(client, message):
+ await message.reply_text(text =f"Hello **{message.from_user.first_name }** \n\n __I am simple Google Translater Bot \n I can translate any language to you desired language__",reply_to_message_id = message.message_id ,parse_mode="markdown", reply_markup=InlineKeyboardMarkup([ [  
+                                   InlineKeyboardButton("Channel", url="https://t.me/Tg_free_bots"),
+ 				InlineKeyboardButton("Report Bug", url="https://t.me/ErrorSupportbot") ] ,
+	 			[InlineKeyboardButton("All our FREE BOTS", url="https://t.me/TG_Free_Bots/3")] ] )                 
 
-    return IN  # return to state IN and wherever you enter or send it first find in IN
-def translater(update,context):
-    ''' Translator Function
-    it takes string and split it 
-    then check 
-            1.the word 'to' in the text 
-            2.the length of the splited text must greater than 2 means it must have at least one additional word other than 'to' and des.. language
-            3.check the language the user entered is found on the language dictionary  
-    it then take the last word as a destination language if it is valid 
-    then delete it the last first means the destination language and last second means 'to'
-    get the code for the destination language from getdest function
-    the join the text by space to have the original text format and send to to the translator function
-    finally print the text and pronunciation of the word 
-    if the last 3 condition is false it sends error message to input the user again
-    '''
-    
-    global text
-    text = update.message.text
-    dest = text.split()[-1]
-    if 'to' in text and len(text.split()) > 2 and languagecheck (dest):
-        text = text.split()
-        dest = text[-1]
-        dest = getdest(dest)
-        del text[-2],text[-1]
-        text = ' '.join(text)
-        text = trans(text,dest)
-        context.bot.send_message(chat_id=update.message.chat_id , text="""
-Translation is 
-_________________
-<strong>{}</strong>
-_________________
-pronunciation is 
-_________________
-<strong>{}</strong>
-""".format(text.text,text.pronunciation ),parse_mode=telegram.ParseMode.HTML )
-        update.message.reply_text(form,parse_mode=telegram.ParseMode.HTML)
-    else:
-        update.message.reply_text('Please Enter in The correct format your input is invalid ')
-        update.message.reply_text(form,parse_mode=telegram.ParseMode.HTML)
-        # print(text.text)
-    return IN
-def trans(text,dest='en'):
-    ''' Translator Function 
-    it Translate the text to the destionation language'''
-    return  translator.translate(text,dest=dest)
-def cancel(update, context):
-    ''' to cancel the conversation'''
-    update.message.reply_text('Thank you! I hope we can talk again some day.\n')
-    return ConversationHandler.END
-def echo(update, context):
-    ''' echo if any one cancel the conversation and send text to be translated'''
-    context.bot.send_message(chat_id=update.effective_chat.id, text="Please send /start to start conversation")
-def error(update, context):
-    """Log Errors caused by Updates."""
-    logger.warning('Update "%s" caused error "%s"', update, context.error)
-def languagecheck(text):
-    if text.lower() in LANGCODES:
-        return True
-    else:
-        return False
-def getdest(dest="english"):
-    try:
-        return LANGCODES[dest.lower()]
-    except:
-        return False
-def main():
-    ''' updater startup'''
-    updater = Updater(token=token,use_context=True)
-    dispatcher = updater.dispatcher
-    '''conversation  handeled by this''' 
-    conv_handler = ConversationHandler (
-        entry_points=[CommandHandler('start', start)],
 
-        states={
-            IN: [MessageHandler(Filters.text , translater)],
-            
-        },
 
-        fallbacks=[CommandHandler('cancel', cancel)] ,)
-    
-    
-    ''' registering the hander to dispatcher'''
-    
-    echo_handler = MessageHandler(Filters.text, echo)
-    dispatcher.add_handler(echo_handler)
-    dispatcher.add_error_handler(error)
-    dispatcher.add_handler(conv_handler)
-    ''' start fetching dat from the telegram'''
-    updater.start_polling()
-    ''' to stop the code runnig in the cmd by control+c'''
-    updater.idle()
+@app.on_message(filters.private & filters.text  )
+async def echo(client, message):
+	
+	
+ keybord1= InlineKeyboardMarkup( [
+        [ 
+            InlineKeyboardButton("Afrikaans", callback_data='af'),
+             InlineKeyboardButton("Albanian", callback_data='sq'),
+            InlineKeyboardButton("Amharic",callback_data ='am'),
+        ],
+        [   InlineKeyboardButton("Arabic", callback_data='ar'),
+        InlineKeyboardButton("Armenian", callback_data='hy'),      
+        InlineKeyboardButton("Azerbaijani",callback_data = 'az'),        
+        ],
+        [InlineKeyboardButton("Basque",callback_data ="eu"),
+        	 InlineKeyboardButton("Belarusian",callback_data ="be"),       	
+	InlineKeyboardButton("Bengali",callback_data="bn")],
+	
+	[InlineKeyboardButton("Bosnian",callback_data = "bs"),
+	InlineKeyboardButton("Bulgarian",callback_data ="bg"),
+	InlineKeyboardButton("Catalan",callback_data = "ca")
+	],
+	[ 
+	InlineKeyboardButton("Corsican",callback_data ="co"),
+	InlineKeyboardButton("Croatian",callback_data = "hr"),
+	InlineKeyboardButton("Czech", callback_data = "cs"),
+	],
+	[ InlineKeyboardButton("Danish",callback_data = "da"),
+	InlineKeyboardButton("Dutch",callback_data = "nl"),
+	InlineKeyboardButton("Esperanto",callback_data = "eo"),	 
+	],
+	[InlineKeyboardButton(" Next --->",callback_data = "page2")
+	]
+	] )
+	
+ await  message.reply_text("Select language 👇",reply_to_message_id = message.message_id, reply_markup = keybord1) 
 
-'''driver'''
-if __name__ == '__main__':
-    main()
+
+@app.on_callback_query()
+async def translate_text(bot,update):
+  keybord6 =  InlineKeyboardMarkup([
+       [InlineKeyboardButton("Thai",callback_data = "th"),
+       InlineKeyboardButton("Turkish",callback_data = "tr"),
+       InlineKeyboardButton("Turkmen",callback_data ="tk")     
+       ],
+       [InlineKeyboardButton("Ukrainian",callback_data = "uk"),
+       InlineKeyboardButton("Urdu",callback_data = "ur"),
+       InlineKeyboardButton("Uyghur",callback_data ="ug")
+       
+       ],
+       [InlineKeyboardButton("Uzbek",callback_data = "uz"),
+       InlineKeyboardButton("Vietnamese",callback_data ="vi"),
+       InlineKeyboardButton("Welsh",callback_data = "cy")
+       
+       ],
+       [InlineKeyboardButton("Xhosa",callback_data = "xh"),
+       InlineKeyboardButton("Yiddish",callback_data = "yi"),
+       InlineKeyboardButton("Yoruba",callback_data = "yo")],
+       [InlineKeyboardButton("<--- Back",callback_data = "page5")
+       
+       ]
+ ])
+  
+  keybord5 = InlineKeyboardMarkup([
+         [InlineKeyboardButton("Scots Gaelic",callback_data = "gd"),
+         InlineKeyboardButton("Serbian",callback_data = "sr"),
+         InlineKeyboardButton("Sesotho",callback_data = "st")
+         ],
+         [InlineKeyboardButton("Shona",callback_data ="sn"),
+         InlineKeyboardButton("Sindhi",callback_data ="sd"),
+         InlineKeyboardButton("Sinhala (Sinhalese)",callback_data = "si")
+         ],
+         [InlineKeyboardButton("Slovak",callback_data = "sk"),
+         InlineKeyboardButton("Slovenian",callback_data = "sl"),
+         InlineKeyboardButton("Somali",callback_data = "so")
+         ],
+         [InlineKeyboardButton("Spanish",callback_data = "es"),
+         InlineKeyboardButton("Sundanese",callback_data ="su"),
+         InlineKeyboardButton("Swahili",callback_data ="sw")
+         ],
+         [InlineKeyboardButton("Swedish",callback_data = "sv"),
+         InlineKeyboardButton("Tagalog (Filipino)",callback_data ='tl'),
+         InlineKeyboardButton("Tajik",callback_data = "tg")
+         ],
+         [InlineKeyboardButton("Tamil",callback_data = "ta"),
+         InlineKeyboardButton("Tatar",callback_data = "tt"),
+         InlineKeyboardButton("Telugu",callback_data = "te")
+         ],
+         [InlineKeyboardButton("<--- Back",callback_data = "page4"),
+         InlineKeyboardButton("Next --->",callback_data = "page6")
+         ]  ])
+   
+ 
+  keybord4 = InlineKeyboardMarkup([
+          [InlineKeyboardButton("Malayalam",callback_data = "ml"),
+          InlineKeyboardButton("Maltese",callback_data = "mt"),
+          InlineKeyboardButton("Maori",callback_data = "mi")
+          ],
+          [InlineKeyboardButton("Marathi",callback_data = "mr"),
+          InlineKeyboardButton("Mongolian",callback_data = "mn"),
+          InlineKeyboardButton("Myanmar (Burmese)",callback_data = "my")
+          ],
+          [InlineKeyboardButton("Nepali",callback_data ="ne"),
+          InlineKeyboardButton("Norwegian",callback_data = "no"),
+          InlineKeyboardButton("Nyanja (Chichewa)",callback_data = "ny")
+          ],
+          [InlineKeyboardButton("Odia",callback_data = "or"),
+          InlineKeyboardButton("Pashto",callback_data = "ps"),
+          InlineKeyboardButton("Persian",callback_data = "fa"),
+          ],
+          [InlineKeyboardButton("Polish",callback_data = "pl"),
+          InlineKeyboardButton("Portuguese",callback_data = "pt"),
+          InlineKeyboardButton("Punjabi",callback_data = "pa"),
+          ],
+          [InlineKeyboardButton("Romanian",callback_data = "ro"),
+          InlineKeyboardButton("Russian",callback_data = "ru"),
+          InlineKeyboardButton("Samoan",callback_data= "sm"),
+          ],
+          [InlineKeyboardButton("<--- Back",callback_data = "page3"),
+          InlineKeyboardButton("Next --->",callback_data = "page5")
+          ]
+          
+ 
+ 
+ 
+ ])
+  
+  
+  keybord3 = InlineKeyboardMarkup([
+                [ InlineKeyboardButton("Italian",callback_data = "it"),
+                InlineKeyboardButton("Japanese",callback_data = "ja"),
+                InlineKeyboardButton("Javanese",callback_data = "jv")
+                ],
+                [InlineKeyboardButton("Kannada",callback_data = "kn"),
+                InlineKeyboardButton("Kazakh",callback_data = "kk"),
+                InlineKeyboardButton("Khmer",callback_data = "km")
+                ],
+                [InlineKeyboardButton("Kinyarwanda",callback_data = "rw"),
+                InlineKeyboardButton("Korean",callback_data ="ko"),
+                InlineKeyboardButton("Kurdish",callback_data = "ku")
+                ],
+                [ InlineKeyboardButton("Kyrgyz",callback_data ="ky"),
+                InlineKeyboardButton("Lao",callback_data = "lo"),
+                InlineKeyboardButton("Latin",callback_data = "la")
+                ],
+                [InlineKeyboardButton("Latvian",callback_data = "lv"),
+                InlineKeyboardButton('Lithuanian',callback_data ="lt"),
+                InlineKeyboardButton("Luxembourgish",callback_data = "lb")
+                ],
+                [InlineKeyboardButton("Macedonian",callback_data = "mk"),
+                InlineKeyboardButton("Malagasy",callback_data ="mg"),
+                InlineKeyboardButton("Malay",callback_data ="ms")
+                ],
+                [InlineKeyboardButton("<--- Back",callback_data = "page2"),
+                InlineKeyboardButton(" Next --->",callback_data = "page4")
+                ]
+              
+ 
+ ])
+  
+  
+  keybord1= InlineKeyboardMarkup( [
+        [ 
+            InlineKeyboardButton("Afrikaans", callback_data='af'),
+             InlineKeyboardButton("Albanian", callback_data='sq'),
+            InlineKeyboardButton("Amharic",callback_data ='am'),
+        ],
+        [   InlineKeyboardButton("Arabic", callback_data='ar'),
+        InlineKeyboardButton("Armenian", callback_data='hy'),      
+        InlineKeyboardButton("Azerbaijani",callback_data = 'az'),        
+        ],
+        [InlineKeyboardButton("Basque",callback_data ="eu"),
+        	 InlineKeyboardButton("Belarusian",callback_data ="be"),       	
+	InlineKeyboardButton("Bengali",callback_data="bn")],
+	
+	[InlineKeyboardButton("Bosnian",callback_data = "bs"),
+	InlineKeyboardButton("Bulgarian",callback_data ="bg"),
+	InlineKeyboardButton("Catalan",callback_data = "ca")
+	],
+	[ 
+	InlineKeyboardButton("Corsican",callback_data ="co"),
+	InlineKeyboardButton("Croatian",callback_data = "hr"),
+	InlineKeyboardButton("Czech", callback_data = "cs"),
+	],
+	[ InlineKeyboardButton("Danish",callback_data = "da"),
+	InlineKeyboardButton("Dutch",callback_data = "nl"),
+	InlineKeyboardButton("Esperanto",callback_data = "eo"),	 
+	],
+	[InlineKeyboardButton(" Next --->",callback_data = "page2")
+	]
+	] )
+  
+  
+  keybord2= InlineKeyboardMarkup([
+           [InlineKeyboardButton("English",callback_data = "en"),
+           InlineKeyboardButton("Estonian",callback_data = "et"),
+           InlineKeyboardButton("Finnish",callback_data = "fi")
+           ],
+           [InlineKeyboardButton("French",callback_data = "fr"),
+           InlineKeyboardButton("Frisian",callback_data = "fy"),
+           InlineKeyboardButton("Galician",callback_data = "gl")
+           ],
+           [InlineKeyboardButton("Georgian",callback_data = "ka"),
+           InlineKeyboardButton("German",callback_data = "de"),
+           InlineKeyboardButton("Greek",callback_data = "el")
+           ],
+           [InlineKeyboardButton("Gujarati",callback_data = "gu"),
+           InlineKeyboardButton("Haitian Creole",callback_data = "ht"),
+           InlineKeyboardButton("Hausa",callback_data ="ha")
+           ],
+           [InlineKeyboardButton("Hindi",callback_data = "hi"),
+           InlineKeyboardButton("Hungarian",callback_data = "hu"),
+           InlineKeyboardButton("Icelandic",callback_data = "is")
+           ],
+           [InlineKeyboardButton("Igbo",callback_data = "ig"),
+           InlineKeyboardButton("Indonesian",callback_data = "id"),
+           InlineKeyboardButton("Irish",callback_data = "ga")
+           ],
+           [InlineKeyboardButton("<--- Back",callback_data = "page1"),
+           InlineKeyboardButton(" Next --->",callback_data = "page3"),
+           ]
+            ])
+						
+  
+  
+  
+  tr_text = update.message.reply_to_message.text
+  cb_data = update.data
+  if cb_data== "page2":
+  	await update.message.edit("Select language 👇",reply_markup = keybord2)
+  elif cb_data == "page1":
+  	await update.message.edit("Select language 👇",reply_markup =keybord1)
+  elif cb_data =="page3":
+  	await update.message.edit("Select language 👇",reply_markup =keybord3)
+  elif cb_data == "page4":
+  	await update.message.edit("Select language 👇",reply_markup =keybord4)
+  elif cb_data =="page5":
+  	await update.message.edit("Select language 👇",reply_markup =keybord5)
+  elif cb_data =="page6":
+  	await update.message.edit("Select language 👇",reply_markup =keybord6)
+  else :
+       translator = Translator()  
+       translation = translator.translate(tr_text,dest=cb_data) 
+       await update.message.edit(translation.text)
+
+app.run()
